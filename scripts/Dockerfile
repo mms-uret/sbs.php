@@ -1,4 +1,6 @@
-FROM {base}
+ARG base_image
+
+FROM $base_image
 
 RUN mkdir /workspace
 RUN mkdir /local

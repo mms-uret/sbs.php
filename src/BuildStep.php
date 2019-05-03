@@ -67,7 +67,7 @@ class BuildStep
         $imageName = $this->config['image'];
         // @claudio: brauchts den docker pull base-image zuvor?
         $this->io->writeln("Start building docker image...");
-        $process = new Process('docker', 'build --rm -t ' . $imageName . ' ' . $this->directory);
+        $process = new Process('docker', 'build --rm -t --build-arg base_image=' . $this->config['base'] . ' ' . $imageName . ' ' . $this->directory);
         $this->executeProcess($process, "Docker build");
 
         // push container to docker hub
