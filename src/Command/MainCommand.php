@@ -22,7 +22,7 @@ class MainCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
-        $sbs = new SBS($io);
+        $sbs = new SBS(getcwd(), $io);
 
         $steps = $sbs->list();
         $io->writeln('Found ' . count($steps) . ' build steps');

@@ -4,6 +4,7 @@
 namespace App;
 
 
+use Exception;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
@@ -13,11 +14,13 @@ class BuildStep
 {
     protected $directory;
     protected $config;
+    protected $projectDirectory;
     private $io;
 
     public function __construct(string $directory, SymfonyStyle $io)
     {
         $this->directory = $directory;
+        $this->projectDirectory = getcwd();
         $this->config = Yaml::parseFile($this->directory . '/sbs.yml');
         $this->io = $io;
     }
@@ -26,9 +29,9 @@ class BuildStep
     {
         $result = '';
         foreach ($this->config['input'] as $input) {
-            $path = $this->directory . '/../../' . $input;
+            $path = $this->projectDirectory . '/' . $input;
             if (!file_exists($path)) {
-                throw new \Exception('Should be here: ' . $path);
+                throw new Exception('Should be here: ' . $path);
             }
             $result .= md5_file($path);
         }
@@ -43,11 +46,13 @@ class BuildStep
 
     public function build()
     {
+        $filesystem = new Filesystem();
+
         // create move-output-when-needed
         $this->io->writeln("Create files for building docker image...");
         $content = "#!/bin/bash\n";
         foreach ($this->config['output'] as $output) {
-            $content .= "mv /workspace/" . $output . " /local/" . $output . "\n";
+            $content .= "mv -f /workspace/" . $output . " /local/\n";
         }
         file_put_contents($this->directory . '/move-output-when-needed', $content);
 
@@ -59,14 +64,22 @@ class BuildStep
 
         // copy Dockerfile
         $scriptsDirectory = realpath(__DIR__ . '/../scripts');
-        $content = file_get_contents($scriptsDirectory . '/Dockerfile');
-        file_put_contents($this->directory . '/Dockerfile', $content);
+        $filesystem->copy($scriptsDirectory . '/Dockerfile', $this->directory . '/Dockerfile');
+
+        // copy input to /input
+        foreach ($this->config['input'] as $input) {
+            $cmd = 'cp -R ' . $this->projectDirectory . '/' . $input . ' ' . $this->directory . '/input';
+            $process = Process::fromShellCommandline($cmd);
+            $this->executeProcess($process, "Prepare input files for docker container");
+        }
 
         // start docker build
         $imageName = $this->config['image'];
         // @claudio: brauchts den docker pull base-image zuvor?
         $this->io->writeln("Start building docker image...");
-        $process = new Process('docker', 'build --rm -t --build-arg base_image=' . $this->config['base'] . ' ' . $imageName . ' ' . $this->directory);
+        $cmd = 'docker build --rm -t ' . $imageName . ':' . $this->hash() . ' --build-arg base_image=' . $this->config['base'] . ' ./';
+        $this->io->confirm($cmd);
+        $process = Process::fromShellCommandline($cmd);
         $this->executeProcess($process, "Docker build");
 
         // push container to docker hub
@@ -74,22 +87,25 @@ class BuildStep
         // @claudio: da weiss ich nicht genau was zu tun ist
 
         // clean up
-        $this->io->writeln("Clean up of build scripts...");
+        /*$this->io->writeln("Clean up of build scripts...");
         $files = array_map(function ($baseName) {
             return $this->directory . '/' . $baseName;
         }, ['Dockerfile', 'move-output-when-needed', 'build-output-hash']);
-        $filesystem = new Filesystem();
-        $filesystem->remove($files);
+        $filesystem->remove($files);*/
     }
 
     public function run()
     {
         // run docker container
         $name = $this->name();
-        $process = new Process('docker', 'run --name ' . $name . ' -v ' . $this->directory . ':/local ' . $name);
+        $cmd = 'docker run --name ' . $name . ' -v ' . $this->projectDirectory . ':/local ' . $this->config['image'] . ':' . $this->hash();
+        $this->io->confirm($cmd);
+        $process = Process::fromShellCommandline($cmd);
         $this->executeProcess($process, "Run Docker container");
 
-        $process = new Process('docker', 'rm -f ' . $name);
+        $cmd = 'docker rm -f ' . $name;
+        $this->io->confirm($cmd);
+        $process = Process::fromShellCommandline($cmd);
         $this->executeProcess($process, "Remove docker container");
     }
 
@@ -111,6 +127,7 @@ class BuildStep
     private function executeProcess(Process $process, $name)
     {
         $process->setWorkingDirectory($this->directory);
+        $process->setTimeout(36000);
         $exitCode = $process->run(function($type, $buffer) {
             $this->io->write($buffer);
         });

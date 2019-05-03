@@ -12,15 +12,9 @@ class SBS
     private $rootDirectory;
     private $io;
 
-    public function __construct($rootDirectory = null, SymfonyStyle $io)
+    public function __construct($rootDirectory, SymfonyStyle $io)
     {
-        if (!$rootDirectory) {
-            $rootDirectory = getcwd();
-        }
         $this->rootDirectory = $rootDirectory;
-        if (!is_dir($this->rootDirectory)) {
-            throw new \Exception('Need sbs directory!!!');
-        }
         $this->io = $io;
     }
 
