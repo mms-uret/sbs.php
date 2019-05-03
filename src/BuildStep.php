@@ -60,15 +60,13 @@ class BuildStep
         // copy Dockerfile
         $scriptsDirectory = realpath(__DIR__ . '/../scripts');
         $content = file_get_contents($scriptsDirectory . '/Dockerfile');
-        $content = str_replace('{base}', $this->config['base'] , $content);
         file_put_contents($this->directory . '/Dockerfile', $content);
 
         // start docker build
         $imageName = $this->config['image'];
         // @claudio: brauchts den docker pull base-image zuvor?
-        // @claudio: warum --no-cache?
         $this->io->writeln("Start building docker image...");
-        $process = new Process('docker', 'build --rm -t ' . $imageName . ' ./ --no-cache');
+        $process = new Process('docker', 'build --rm -t --build-arg base_image=' . $this->config['base'] . ' ' . $imageName . ' ' . $this->directory);
         $this->executeProcess($process, "Docker build");
 
         // push container to docker hub
