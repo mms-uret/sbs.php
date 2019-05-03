@@ -60,7 +60,6 @@ class BuildStep
         // copy Dockerfile
         $scriptsDirectory = realpath(__DIR__ . '/../scripts');
         $content = file_get_contents($scriptsDirectory . '/Dockerfile');
-        $content = str_replace('{base}', $this->config['base'] , $content);
         file_put_contents($this->directory . '/Dockerfile', $content);
 
         // start docker build
