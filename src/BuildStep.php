@@ -52,7 +52,8 @@ class BuildStep
         $this->io->writeln("Create files for building docker image...");
         $content = "#!/bin/bash\n";
         foreach ($this->config['output'] as $output) {
-            $content .= "mv -f /workspace/" . $output . " /local/\n";
+            $content .= "rm -rf /local/" . $output . "\n";
+            $content .= "mv /workspace/" . $output . " /local/\n";
         }
         file_put_contents($this->directory . '/move-output-when-needed', $content);
 
@@ -87,11 +88,14 @@ class BuildStep
         // @claudio: da weiss ich nicht genau was zu tun ist
 
         // clean up
-        /*$this->io->writeln("Clean up of build scripts...");
+        $this->io->writeln("Clean up of build scripts...");
         $files = array_map(function ($baseName) {
             return $this->directory . '/' . $baseName;
         }, ['Dockerfile', 'move-output-when-needed', 'build-output-hash']);
-        $filesystem->remove($files);*/
+        $filesystem->remove($files);
+        foreach ($this->config['input'] as $input) {
+            $filesystem->remove($this->directory . '/input/' . $input);
+        }
     }
 
     public function run()
