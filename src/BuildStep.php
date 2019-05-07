@@ -79,7 +79,6 @@ class BuildStep
         $imageName = $this->config['image'];
         $this->io->writeln("Start building docker image...");
         $cmd = 'docker build --rm -t ' . $imageName . ':' . $this->hash() . ' --build-arg base_image=' . $this->config['base'] . ' ./';
-        $this->io->confirm($cmd);
         $process = Process::fromShellCommandline($cmd);
         $this->executeProcess($process, "Docker build");
 
@@ -109,12 +108,10 @@ class BuildStep
         $this->executeProcess($process);
 
         $cmd = 'docker run --name ' . $name . ' -v ' . $this->projectDirectory . ':/local ' . $this->config['image'] . ':' . $this->hash();
-        $this->io->confirm($cmd);
         $process = Process::fromShellCommandline($cmd);
         $this->executeProcess($process, "Run Docker container");
 
         $cmd = 'docker rm -f ' . $name;
-        $this->io->confirm($cmd);
         $process = Process::fromShellCommandline($cmd);
         $this->executeProcess($process, "Remove docker container");
     }
