@@ -1,0 +1,6 @@
+{
+  "main": "bin/console",
+  "output": "sbs.phar",
+  "directories": ["bin", "config", "scripts", "src", "vendor"],
+  "files": [".env", ".env.local.php", "version.txt"]
+}

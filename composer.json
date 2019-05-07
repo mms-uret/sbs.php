@@ -46,6 +46,9 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "post-autoload-dump": [
+            "@auto-scripts"
         ]
     },
     "conflict": {
@@ -56,5 +59,8 @@
             "allow-contrib": false,
             "require": "4.2.*"
         }
+    },
+    "require-dev": {
+        "humbug/box": "^3.0@dev"
     }
 }

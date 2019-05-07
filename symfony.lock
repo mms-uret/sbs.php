@@ -1,4 +1,118 @@
 {
+    "amphp/amp": {
+        "version": "v2.1.1"
+    },
+    "amphp/byte-stream": {
+        "version": "v1.5.1"
+    },
+    "amphp/parallel": {
+        "version": "v1.1.1"
+    },
+    "amphp/parallel-functions": {
+        "version": "v0.1.3"
+    },
+    "amphp/parser": {
+        "version": "v1.0.0"
+    },
+    "amphp/process": {
+        "version": "v1.1.0"
+    },
+    "amphp/sync": {
+        "version": "v1.0.1"
+    },
+    "beberlei/assert": {
+        "version": "v3.2.0"
+    },
+    "composer/semver": {
+        "version": "1.x-dev"
+    },
+    "composer/xdebug-handler": {
+        "version": "1.3.2"
+    },
+    "hoa/compiler": {
+        "version": "3.x-dev"
+    },
+    "hoa/consistency": {
+        "version": "1.17.05.02"
+    },
+    "hoa/event": {
+        "version": "1.17.01.13"
+    },
+    "hoa/exception": {
+        "version": "1.17.01.16"
+    },
+    "hoa/file": {
+        "version": "1.17.07.11"
+    },
+    "hoa/iterator": {
+        "version": "2.17.01.10"
+    },
+    "hoa/math": {
+        "version": "1.x-dev"
+    },
+    "hoa/protocol": {
+        "version": "1.17.01.14"
+    },
+    "hoa/regex": {
+        "version": "1.17.01.13"
+    },
+    "hoa/stream": {
+        "version": "1.17.02.21"
+    },
+    "hoa/ustring": {
+        "version": "4.17.01.16"
+    },
+    "hoa/visitor": {
+        "version": "2.17.01.16"
+    },
+    "hoa/zformat": {
+        "version": "1.x-dev"
+    },
+    "humbug/box": {
+        "version": "3.x-dev"
+    },
+    "humbug/php-scoper": {
+        "version": "0.11.4"
+    },
+    "jetbrains/phpstorm-stubs": {
+        "version": "v2019.1"
+    },
+    "justinrainbow/json-schema": {
+        "version": "5.x-dev"
+    },
+    "nikic/iter": {
+        "version": "1.x-dev"
+    },
+    "nikic/php-parser": {
+        "version": "4.2-dev"
+    },
+    "ocramius/package-versions": {
+        "version": "1.4.0"
+    },
+    "opis/closure": {
+        "version": "3.2.x-dev"
+    },
+    "paragonie/constant_time_encoding": {
+        "version": "v2.2.3"
+    },
+    "paragonie/pharaoh": {
+        "version": "v0.5.0"
+    },
+    "paragonie/sodium_compat": {
+        "version": "v1.9.1"
+    },
+    "phpdocumentor/reflection-common": {
+        "version": "1.0.1"
+    },
+    "phpdocumentor/reflection-docblock": {
+        "version": "4.3.1"
+    },
+    "phpdocumentor/type-resolver": {
+        "version": "0.4.0"
+    },
+    "phpseclib/phpseclib": {
+        "version": "2.0.x-dev"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
@@ -7,6 +121,15 @@
     },
     "psr/log": {
         "version": "1.1.0"
+    },
+    "roave/better-reflection": {
+        "version": "3.4.0"
+    },
+    "roave/signature": {
+        "version": "1.0.0"
+    },
+    "seld/jsonlint": {
+        "version": "1.7.1"
     },
     "symfony/cache": {
         "version": "v4.2.7"
@@ -118,10 +241,22 @@
             "config/routes.yaml"
         ]
     },
+    "symfony/var-dumper": {
+        "version": "4.2.x-dev"
+    },
     "symfony/var-exporter": {
         "version": "v4.2.7"
     },
     "symfony/yaml": {
         "version": "v4.2.7"
+    },
+    "ulrichsg/getopt-php": {
+        "version": "v3.x-dev"
+    },
+    "webmozart/assert": {
+        "version": "1.4.0"
+    },
+    "webmozart/path-util": {
+        "version": "2.3-dev"
     }
 }
