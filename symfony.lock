@@ -79,9 +79,6 @@
             "src/Kernel.php"
         ]
     },
-    "symfony/http-client": {
-        "version": "4.3-dev"
-    },
     "symfony/http-foundation": {
         "version": "v4.2.7"
     },

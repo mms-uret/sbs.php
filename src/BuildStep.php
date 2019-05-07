@@ -40,8 +40,9 @@ class BuildStep
 
     public function hasDockerImage(string $hash): bool
     {
-        // TODO
-        return false;
+        $cmd = "docker image pull " . $this->config['image'] . ':' . $hash;
+        $process = Process::fromShellCommandline($cmd);
+        return $this->executeProcess($process);
     }
 
     public function build()
@@ -84,7 +85,9 @@ class BuildStep
 
         // push container to docker hub
         $this->io->writeln("Upload docker image to Docker Hub...");
-        // @claudio: da weiss ich nicht genau was zu tun ist
+        $cmd = "docker push " .  $imageName . ':' . $this->hash();
+        $process = Process::fromShellCommandline($cmd);
+        $this->executeProcess($process, "Publish image to docker hub");
 
         // clean up
         $this->io->writeln("Clean up of build scripts...");
@@ -101,6 +104,10 @@ class BuildStep
     {
         // run docker container
         $name = $this->name();
+        $cmd = 'docker rm -f ' . $name;
+        $process = Process::fromShellCommandline($cmd);
+        $this->executeProcess($process);
+
         $cmd = 'docker run --name ' . $name . ' -v ' . $this->projectDirectory . ':/local ' . $this->config['image'] . ':' . $this->hash();
         $this->io->confirm($cmd);
         $process = Process::fromShellCommandline($cmd);
@@ -127,17 +134,22 @@ class BuildStep
         return $this->name();
     }
 
-    private function executeProcess(Process $process, $name)
+    private function executeProcess(Process $process, $name = null)
     {
         $process->setWorkingDirectory($this->directory);
         $process->setTimeout(36000);
-        $exitCode = $process->run(function($type, $buffer) {
-            $this->io->write($buffer);
+        $exitCode = $process->run(function($type, $buffer) use ($name) {
+            if ($name) {
+                $this->io->write($buffer);
+            }
         });
-        if ($exitCode === 0) {
-            $this->io->success("Successful executed $name");
-        } else {
-            $this->io->error("Error in $name");
+        if ($name) {
+            if ($exitCode === 0) {
+                $this->io->success("Successful executed $name");
+            } else {
+                $this->io->error("Error in $name");
+            }
         }
+        return $exitCode === 0;
     }
 }
