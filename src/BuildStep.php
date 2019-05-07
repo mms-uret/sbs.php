@@ -7,6 +7,8 @@ namespace App;
 use Exception;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
 
@@ -33,7 +35,15 @@ class BuildStep
             if (!file_exists($path)) {
                 throw new Exception('Should be here: ' . $path);
             }
-            $result .= md5_file($path);
+            if (is_dir($path)) {
+                $finder = new Finder();
+                foreach ($finder->files()->in($path) as $file) {
+                    /** @var SplFileInfo $file */
+                    $result .= md5_file($file->getRealPath());
+                }
+            } else {
+                $result .= md5_file($path);
+            }
         }
         return md5($result);
     }
@@ -75,10 +85,12 @@ class BuildStep
             $this->executeProcess($process, "Prepare input files for docker container");
         }
 
+        $baseImage = $this->config['base'];
+
         // start docker build
         $imageName = $this->config['image'];
         $this->io->writeln("Start building docker image...");
-        $cmd = 'docker build --rm -t ' . $imageName . ':' . $this->hash() . ' --build-arg base_image=' . $this->config['base'] . ' ./';
+        $cmd = 'docker build --rm -t ' . $imageName . ':' . $this->hash() . ' --build-arg base_image=' . $baseImage . ' ./';
         $process = Process::fromShellCommandline($cmd);
         $this->executeProcess($process, "Docker build");
 
