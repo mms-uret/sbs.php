@@ -17,7 +17,7 @@ class MainCommand extends Command
 {
     protected function configure()
     {
-        $this->setName('main');
+        $this->setName('build');
         $this->addArgument('step', InputArgument::OPTIONAL, 'which build step to build. if not specified, all found all built');
         $this->addOption('force', 'f', InputOption::VALUE_NONE, 'When given, the container will be built anyways');
 
