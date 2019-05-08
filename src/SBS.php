@@ -26,7 +26,17 @@ class SBS
         $finder = new Finder();
         $result = [];
         foreach ($finder->directories()->depth(0)->in($this->rootDirectory . '/sbs') as $dir) {
-            $result[] = new BuildStep($dir, $this->io);
+            $buildStep = new BuildStep($dir, $this->io);
+            $result[$buildStep->name()] = $buildStep;
+        }
+
+        // resolve depends_on
+        foreach ($result as $step) {
+            /** @var BuildStep $step */
+            $dependsOn = $step->dependsOn();
+            if ($dependsOn) {
+                $step->setParent($result[$dependsOn]);
+            }
         }
         return $result;
     }

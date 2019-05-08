@@ -18,6 +18,8 @@ class BuildStep
     protected $config;
     protected $projectDirectory;
     private $io;
+    /** @var BuildStep */
+    private $parent;
 
     public function __construct(string $directory, SymfonyStyle $io)
     {
@@ -44,6 +46,9 @@ class BuildStep
             } else {
                 $result .= md5_file($path);
             }
+        }
+        if ($this->parent) {
+            $result .= $this->parent->hash();
         }
         return md5($result);
     }
@@ -85,7 +90,11 @@ class BuildStep
             $this->executeProcess($process, "Prepare input files for docker container");
         }
 
-        $baseImage = $this->config['base'];
+        if ($this->parent) {
+            $baseImage = $this->parent->dockerImage();
+        } else {
+            $baseImage = $this->config['base'];
+        }
 
         // start docker build
         $imageName = $this->config['image'];
@@ -128,14 +137,28 @@ class BuildStep
         $this->executeProcess($process, "Remove docker container");
     }
 
-    public function name()
+    public function name(): string
     {
         return basename($this->directory);
     }
 
-    public function title()
+    public function title(): string
     {
-        return $this->config['title'];
+        return $this->config['title'] ?? $this->name();
+    }
+
+    public function dependsOn(): string
+    {
+        return $this->config['depends_on'] ?? '';
+    }
+
+    public function setParent(BuildStep $parent)
+    {
+        $this->parent = $parent;
+    }
+
+    public function dockerImage(): string {
+        return $this->config['image'] . ':' . $this->hash();
     }
 
     public function __toString()
