@@ -84,10 +84,11 @@ class BuildStep
         $filesystem->copy($scriptsDirectory . '/Dockerfile', $this->directory . '/Dockerfile');
 
         // copy input to /input
+        $this->io->writeln('Prepare input for container');
         foreach ($this->config['input'] as $input) {
             $cmd = 'cp -R ' . $this->projectDirectory . '/' . $input . ' ' . $this->directory . '/input';
             $process = Process::fromShellCommandline($cmd);
-            $this->executeProcess($process, "Prepare input files for docker container");
+            $this->executeProcess($process);
         }
 
         if ($this->parent) {

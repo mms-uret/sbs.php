@@ -13,13 +13,14 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class MainCommand extends Command
+class BuildCommand extends Command
 {
     protected function configure()
     {
         $this->setName('build');
         $this->addArgument('step', InputArgument::OPTIONAL, 'which build step to build. if not specified, all found all built');
         $this->addOption('force', 'f', InputOption::VALUE_NONE, 'When given, the container will be built anyways');
+        $this->addOption('increment', 'i', InputOption::VALUE_REQUIRED, 'File which holds the hashes which are currently built and do not need a rebuild');
 
     }
 
@@ -38,11 +39,21 @@ class MainCommand extends Command
             });
         }
 
+        $buildRegistry = $input->getOption('increment');
+        if ($buildRegistry) {
+            $sbs->buildRegistry($buildRegistry);
+        }
+
         foreach ($steps as $step) {
             $io->title($step->title());
 
             $hash = $step->hash();
             $io->writeln('Hash: ' . $hash);
+
+            if (!$sbs->isIncrement($step->name(), $hash)) {
+                $io->writeln('Hash is already built according to built file. So we are skipping this step.');
+                continue;
+            }
 
             if (!$input->hasOption('force') && $step->hasDockerImage($hash)) {
                 $io->writeln('There is a Docker image for this hash.');
@@ -54,6 +65,8 @@ class MainCommand extends Command
 
             $io->section('Copy build artifacts to your code');
             $step->run();
+
+            $sbs->registerBuild($step->name(), $hash);
         }
 
         $io->success('Done \\o/');

@@ -11,6 +11,7 @@ class SBS
 {
     private $rootDirectory;
     private $io;
+    private $buildRegistry;
 
     public function __construct($rootDirectory, SymfonyStyle $io)
     {
@@ -39,5 +40,38 @@ class SBS
             }
         }
         return $result;
+    }
+
+    public function buildRegistry(string $filePath)
+    {
+        $this->buildRegistry = realpath($filePath);
+    }
+
+    public function isIncrement(string $name, string $hash): bool
+    {
+        if (!$this->buildRegistry || !is_file($this->buildRegistry)) {
+            return true;
+        }
+        $alreadyBuilt = json_decode(file_get_contents($this->buildRegistry), true);
+        return !($alreadyBuilt && isset($alreadyBuilt[$name]) && $alreadyBuilt[$name] === $hash);
+    }
+
+    public function registerBuild(string $name, string $hash)
+    {
+        if (!$this->buildRegistry || !is_writable($this->buildRegistry)) {
+            return;
+        }
+        $alreadyBuilt = json_decode(file_get_contents($this->buildRegistry), true);
+        $alreadyBuilt[$name] = $hash;
+        file_put_contents($this->buildRegistry, json_encode($alreadyBuilt));
+    }
+
+    public function builtNames(string $builtFilePath): array
+    {
+        if (is_file($builtFilePath)) {
+            return json_decode($builtFilePath, true);
+        } else {
+            return [];
+        }
     }
 }
