@@ -51,20 +51,24 @@ class BuildCommand extends Command
             $io->writeln('Hash: ' . $hash);
 
             if (!$sbs->isIncrement($step->name(), $hash)) {
-                $io->writeln('Hash is already built according to built file. So we are skipping this step.');
+                $io->writeln('Hash is already built according to built registry. So we are skipping this step.');
                 continue;
             }
 
-            if (!$input->hasOption('force') && $step->hasDockerImage($hash)) {
-                $io->writeln('There is a Docker image for this hash.');
+            if ($step->hasCommand()) {
+                $step->execute();
             } else {
-                $io->writeln("There is no Docker image for this hash, so we're building one.");
-                $io->section('Build');
-                $step->build();
-            }
+                if (!$input->hasOption('force') && $step->hasDockerImage($hash)) {
+                    $io->writeln('There is a Docker image for this hash.');
+                } else {
+                    $io->writeln("There is no Docker image for this hash, so we're building one.");
+                    $io->section('Build');
+                    $step->build();
+                }
 
-            $io->section('Copy build artifacts to your code');
-            $step->run();
+                $io->section('Copy build artifacts to your code');
+                $step->run();
+            }
 
             $sbs->registerBuild($step->name(), $hash);
         }

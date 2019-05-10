@@ -167,6 +167,17 @@ class BuildStep
         return $this->name();
     }
 
+    public function execute() {
+        $process = Process::fromShellCommandline($this->config['cmd']);
+        $this->executeProcess($process, $this->config['cmd']);
+    }
+
+    public function hasCommand(): bool
+    {
+        return isset($this->config['cmd']);
+    }
+
+
     private function executeProcess(Process $process, $name = null)
     {
         $process->setWorkingDirectory($this->directory);
