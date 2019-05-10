@@ -44,7 +44,7 @@ class SBS
 
     public function buildRegistry(string $filePath)
     {
-        $this->buildRegistry = realpath($filePath);
+        $this->buildRegistry = $filePath;
     }
 
     public function isIncrement(string $name, string $hash): bool
@@ -58,10 +58,14 @@ class SBS
 
     public function registerBuild(string $name, string $hash)
     {
-        if (!$this->buildRegistry || !is_writable($this->buildRegistry)) {
+        if (!$this->buildRegistry) {
             return;
         }
-        $alreadyBuilt = json_decode(file_get_contents($this->buildRegistry), true);
+        if (is_file($this->buildRegistry)) {
+            $alreadyBuilt = json_decode(file_get_contents($this->buildRegistry), true);
+        } else {
+            $alreadyBuilt = [];
+        }
         $alreadyBuilt[$name] = $hash;
         file_put_contents($this->buildRegistry, json_encode($alreadyBuilt));
     }

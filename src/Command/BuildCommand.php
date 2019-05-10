@@ -55,8 +55,9 @@ class BuildCommand extends Command
                 continue;
             }
 
+            $success = true;
             if ($step->hasCommand()) {
-                $step->execute();
+                $success = $step->execute();
             } else {
                 if (!$input->hasOption('force') && $step->hasDockerImage($hash)) {
                     $io->writeln('There is a Docker image for this hash.');
@@ -70,7 +71,9 @@ class BuildCommand extends Command
                 $step->run();
             }
 
-            $sbs->registerBuild($step->name(), $hash);
+            if ($success) {
+                $sbs->registerBuild($step->name(), $hash);
+            }
         }
 
         $io->success('Done \\o/');
