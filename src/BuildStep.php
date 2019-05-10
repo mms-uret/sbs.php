@@ -169,7 +169,11 @@ class BuildStep
 
     public function execute() {
         $process = Process::fromShellCommandline($this->config['cmd']);
-        $this->executeProcess($process, $this->config['cmd']);
+        $process->setTimeout(36000);
+        $exitCode = $process->run(function($type, $buffer) {
+            $this->io->write($buffer);
+        });
+        return $exitCode === 0;
     }
 
     public function hasCommand(): bool
