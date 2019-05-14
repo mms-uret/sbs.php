@@ -1,0 +1,5 @@
+composer:
+  title: Composer dependencies
+  cmd: "composer install"
+  files:
+    - composer.lock
