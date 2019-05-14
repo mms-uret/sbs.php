@@ -53,8 +53,6 @@ class BuildCommand extends Command
                 $step->registerHash($hash);
             }
         }
-
-        $io->success('Done \\o/');
     }
 
 }
