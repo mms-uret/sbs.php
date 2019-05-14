@@ -3,3 +3,4 @@ composer:
   cmd: "composer install"
   files:
     - composer.lock
+  output: vendor

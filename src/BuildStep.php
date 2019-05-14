@@ -25,23 +25,32 @@ class BuildStep
     public function hash()
     {
         $result = '';
-        if (!isset($this->config['files'])) {
-            return md5(uniqid());
+        if (isset($this->config['commit'])) {
+            $branch = $this->config['commit']['branch'];
+            $repo = $this->config['commit']['repo'];
+            $process = Process::fromShellCommandline('git ls-remote ' . $repo . ' ' . $branch);
+            $process->run();
+            $result .= $process->getOutput();
         }
-        foreach ($this->config['files'] as $input) {
-            $path = getcwd() . '/' . $input;
-            if (!file_exists($path)) {
-                throw new \Exception('Should be here: ' . $path);
-            }
-            if (is_dir($path)) {
-                $finder = new Finder();
-                foreach ($finder->files()->in($path) as $file) {
-                    /** @var SplFileInfo $file */
-                    $result .= md5_file($file->getRealPath());
+        if (isset($this->config['files'])) {
+            foreach ($this->config['files'] as $input) {
+                $path = getcwd() . '/' . $input;
+                if (!file_exists($path)) {
+                    throw new \Exception('Should be here: ' . $path);
                 }
-            } else {
-                $result .= md5_file($path);
+                if (is_dir($path)) {
+                    $finder = new Finder();
+                    foreach ($finder->files()->in($path) as $file) {
+                        /** @var SplFileInfo $file */
+                        $result .= md5_file($file->getRealPath());
+                    }
+                } else {
+                    $result .= md5_file($path);
+                }
             }
+        }
+        if (!$result) {
+            $result = uniqid();
         }
         return md5($result);
     }
@@ -79,7 +88,7 @@ class BuildStep
 
     public function registeredHash(): ?string
     {
-        $file = getcwd() . '/sbs.built.json';
+        $file = getcwd() . '/' . $this->config['output'] . '/sbs.built.json';
         if (!is_file($file)) {
             return null;
         }
@@ -89,7 +98,7 @@ class BuildStep
 
     public function registerHash(string $hash)
     {
-        $file = getcwd() . '/sbs.built.json';
+        $file = getcwd() . '/' . $this->config['output'] . '/sbs.built.json';
         $data = [];
         if (is_file($file)) {
             $data = json_decode(file_get_contents($file), true);
