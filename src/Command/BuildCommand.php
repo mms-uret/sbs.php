@@ -58,7 +58,7 @@ class BuildCommand extends Command
                 $successful = false;
             }
             $sinceStart = $startTime->diff(new \DateTime());
-            $io->writeln("Time: " . $sinceStart->format('i:s:f'));
+            $io->writeln("Time: " . $sinceStart->format('%i:%s'));
         }
 
         return $successful ? 0 : 1;
