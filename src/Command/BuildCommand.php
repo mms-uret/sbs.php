@@ -37,22 +37,31 @@ class BuildCommand extends Command
             });
         }
 
+        $successful = true;
         foreach ($steps as $step) {
+            $startTime = new \DateTime();
             $io->title($step->title());
 
             $hash = $step->hash();
             $registeredHash = $step->registeredHash();
 
             if (!$input->getOption('force') && $hash === $registeredHash) {
-                $io->writeln('Hash is already built according to built registry. So we are skipping this step.');
+                $io->writeln('Hash is already built. So we are skipping this step.');
                 continue;
             }
 
             if ($step->build()) {
                 $io->success('Successfully built step ' . $step->title());
                 $step->registerHash($hash);
+            } else {
+                $io->error('Building failed for step ' . $step->title());
+                $successful = false;
             }
+            $sinceStart = $startTime->diff(new \DateTime());
+            $io->writeln("Time: " . $sinceStart->format('i:s:f'));
         }
+
+        return $successful ? 0 : 1;
     }
 
 }
