@@ -25,14 +25,14 @@ class BuildStep
     public function hash()
     {
         $result = '';
-        if (isset($this->config['commit'])) {
+        if ($this->config['commit']['branch']) {
             $branch = $this->config['commit']['branch'];
             $repo = $this->config['commit']['repo'];
             $process = Process::fromShellCommandline('git ls-remote ' . $repo . ' ' . $branch);
             $process->run();
             $result .= $process->getOutput();
         }
-        if (isset($this->config['files'])) {
+        if ($this->config['files']) {
             foreach ($this->config['files'] as $input) {
                 $path = getcwd() . '/' . $input;
                 if (!file_exists($path)) {
@@ -62,13 +62,13 @@ class BuildStep
 
     public function title(): string
     {
-        return $this->config['title'] ?? $this->name();
+        return $this->config['title'];
     }
 
     public function build(): bool
     {
         $process = Process::fromShellCommandline($this->config['cmd']);
-        $timeout = $this->config['timeout'] ?? 36000;
+        $timeout = $this->config['timeout'];
         $process->setTimeout($timeout);
         if (isset($this->config['working_dir']) && is_dir($this->config['working_dir'])) {
             $dir = realpath($this->config['working_dir']);

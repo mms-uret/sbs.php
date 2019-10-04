@@ -1,12 +1,14 @@
 SBS - Super Build Script
 ========================
 
-SBS allows to build just parts of a mono repo.
+SBS allows to build just parts of a mono repo in a CI environment.
 
 Eg. you have a React application and a PHP backend in the same repository.
 When the repository gets built, the PHP Unit tests get executed and also
 the React Application gets built and tested. This always happens when you
-push something to a certain branch.
+push something to the master branch.
+
+Building the React app when only a PHP file is modified is not needed. 
 
 SBS allows to define conditions when a certain build step is needed and
 executes only the needed parts.
@@ -60,4 +62,8 @@ Configuration reference
             branch: the branch name
         files: list of files or directory                    
           
-          
+Installation and usage
+----------------------
+
+    composer require-dev mmz-srf/sbs
+
