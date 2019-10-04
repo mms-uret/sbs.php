@@ -65,11 +65,6 @@ class BuildStep
         return $this->config['title'] ?? $this->name();
     }
 
-    public function dependsOn(): string
-    {
-        return $this->config['depends_on'] ?? '';
-    }
-
     public function build(): bool
     {
         $process = Process::fromShellCommandline($this->config['cmd']);
