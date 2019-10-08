@@ -70,3 +70,11 @@ Installation and usage
 To build the build steps:
     
     vendor/bin/sbs
+
+To build only one specific step:
+
+    vendor/bin/sbs build buildStepName
+ 
+To force to build all build steps
+
+    vendor/bin/sbs --force
