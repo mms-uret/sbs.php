@@ -56,7 +56,7 @@ Configuration reference
         cmd: the command to build this build step
         timeout: seconds the command has to execute before it timeouts, defaults to 3600
         working_dir: if the working directory of the command is not the project root, specify it here
-        output: where sbs writes the information which last state of the build step is built
+        output: where SBS writes the information which last state of the build step is built
         commit: tells SBS to look if there is a new commit hash on a certain repository
             repo: the link to the repository
             branch: the branch name
@@ -65,5 +65,8 @@ Configuration reference
 Installation and usage
 ----------------------
 
-    composer require-dev mmz-srf/sbs
+    composer require mmz-srf/sbs --dev
 
+To build the build steps:
+    
+    vendor/bin/sbs

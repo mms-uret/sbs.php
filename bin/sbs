@@ -1,1 +1,16 @@
-console
+#!/usr/bin/env php
+<?php
+// application.php
+
+require __DIR__.'/../vendor/autoload.php';
+
+use App\Command\BuildCommand;
+use Symfony\Component\Console\Application;
+
+$application = new Application();
+
+$buildCommand = new BuildCommand();
+
+$application->add($buildCommand);
+$application->setDefaultCommand('build');
+$application->run();
