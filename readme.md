@@ -67,6 +67,10 @@ Installation and usage
 
     composer require mmz-srf/sbs --dev
 
+To create an initial sbs.yml:
+
+    vendor/bin/sbs init
+
 To build the build steps:
     
     vendor/bin/sbs
