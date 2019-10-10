@@ -18,6 +18,7 @@ class BuildCommand extends Command
     protected function configure()
     {
         $this->setName('build');
+        $this->setDescription('Build the needed build steps defined in sbs.yml');
         $this->addArgument('step', InputArgument::OPTIONAL, 'which build step to build. if not specified, all found all built');
         $this->addOption('force', 'f', InputOption::VALUE_NONE, 'When given, the build steps will be built anyways');
     }

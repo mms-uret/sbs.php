@@ -27,7 +27,8 @@ class SBS
     {
         $file = $this->rootDirectory . '/sbs.yml';
         if (!is_file($file)) {
-            $this->io->error('No sbs.yml file found in current directory');
+            $this->io->error('No sbs.yml file found in current directory. Use init command');
+            return [];
         }
         $config = Yaml::parseFile($file);
 
@@ -38,6 +39,20 @@ class SBS
         }
 
         return $result;
+    }
+
+    public function init(): void
+    {
+        $file = $this->rootDirectory . '/sbs.yml';
+        if (!is_file($file)) {
+            $defaultFile = __DIR__ . '/../sbs.yml';
+            $defaultContent = file_get_contents($defaultFile);
+            file_put_contents($file, $defaultContent);
+
+            $this->io->success('Created sbs.yml which describes your build steps. Please edit it accordingly.');
+        } else {
+            $this->io->success('You already have a sbs.yml! So nothing to do here.');
+        }
     }
 
     protected function resolveConfig(string $name, array $config): array
