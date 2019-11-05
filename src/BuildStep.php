@@ -24,15 +24,15 @@ class BuildStep
 
     public function hash()
     {
-        $result = '';
         if (isset($this->config['commit']) && isset($this->config['commit']['branch']) && isset($this->config['commit']['repo'])) {
             $branch = $this->config['commit']['branch'];
             $repo = $this->config['commit']['repo'];
             $process = Process::fromShellCommandline('git ls-remote ' . $repo . ' ' . $branch);
             $process->run();
-            $result .= $process->getOutput();
+            return substr($process->getOutput(), 0, 40);
         }
         if (isset($this->config['files'])) {
+            $result = '';
             foreach ($this->config['files'] as $input) {
                 $path = getcwd() . '/' . $input;
                 if (!file_exists($path)) {
@@ -48,11 +48,9 @@ class BuildStep
                     $result .= md5_file($path);
                 }
             }
+            return md5($result);
         }
-        if (!$result) {
-            $result = uniqid();
-        }
-        return md5($result);
+        return md5(uniqid());
     }
 
     public function name(): string
