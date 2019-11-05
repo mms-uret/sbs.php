@@ -45,6 +45,8 @@ class BuildCommand extends Command
 
             $hash = $step->hash();
             $registeredHash = $step->registeredHash();
+            $io->writeln('Built hash: ' . $registeredHash);
+            $io->writeln('Current hash: ' . $hash);
 
             if (!$input->getOption('force') && $hash === $registeredHash) {
                 $io->writeln('Hash is already built. So we are skipping this step.');
