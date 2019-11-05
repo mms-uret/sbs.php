@@ -27,7 +27,7 @@ class BuildStep
         if (isset($this->config['commit']) && isset($this->config['commit']['branch']) && isset($this->config['commit']['repo'])) {
             $branch = $this->config['commit']['branch'];
             $repo = $this->config['commit']['repo'];
-            $process = Process::fromShellCommandline('git ls-remote ' . $repo . ' ' . $branch);
+            $process = new Process('git ls-remote ' . $repo . ' ' . $branch);
             $process->run();
             return substr($process->getOutput(), 0, 40);
         }
@@ -65,7 +65,7 @@ class BuildStep
 
     public function build(): bool
     {
-        $process = Process::fromShellCommandline($this->config['cmd']);
+        $process = new Process($this->config['cmd']);
         $timeout = $this->config['timeout'] ?? 36000;
         $process->setTimeout($timeout);
         if (isset($this->config['working_dir']) && is_dir($this->config['working_dir'])) {
