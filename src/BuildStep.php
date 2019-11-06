@@ -10,16 +10,25 @@ use Symfony\Component\Process\Process;
 
 class BuildStep
 {
+    /** @var string  */
     protected $name;
+    /** @var array  */
     protected $config;
+    /** @var BuildStep|null */
+    protected $parent;
+    /** @var SymfonyStyle */
     private $io;
-
 
     public function __construct(string $name, array $config, SymfonyStyle $io)
     {
         $this->name = $name;
         $this->config = $config;
         $this->io = $io;
+    }
+
+    public function dependsOn(BuildStep $parent)
+    {
+        $this->parent = $parent;
     }
 
     public function hash()
@@ -29,14 +38,14 @@ class BuildStep
             $repo = $this->config['commit']['repo'];
             $process = new Process('git ls-remote ' . $repo . ' ' . $branch);
             $process->run();
-            return substr($process->getOutput(), 0, 40);
-        }
-        if (isset($this->config['files'])) {
+            $hash = substr($process->getOutput(), 0, 40);
+        } elseif (isset($this->config['files'])) {
             $result = '';
             foreach ($this->config['files'] as $input) {
                 $path = getcwd() . '/' . $input;
                 if (!file_exists($path)) {
-                    throw new \Exception('Should be here: ' . $path);
+                    $this->io->warning('File ' . $input . ' does not exist!');
+                    continue;
                 }
                 if (is_dir($path)) {
                     $finder = new Finder();
@@ -48,9 +57,14 @@ class BuildStep
                     $result .= md5_file($path);
                 }
             }
-            return md5($result);
+            $hash = md5($result);
+        } else {
+            $hash = md5(uniqid());
         }
-        return md5(uniqid());
+        if ($this->parent instanceof BuildStep) {
+            $hash = md5($hash . $this->parent->hash());
+        }
+        return $hash;
     }
 
     public function name(): string

@@ -4,3 +4,17 @@ composer:
   files:
     - composer.lock
   output: vendor
+commit:
+  title: This build only when there is a new commit in master branch of mmz-srf/sbs.git
+  cmd: "echo 'New commit since last build'"
+  output: var
+  commit:
+    repo: https://github.com/mmz-srf/sbs.git
+    branch: master
+child:
+  title: This should build when there is a new commit or version.txt is changed
+  cmd: "echo 'Child build step'"
+  depends_on: commit
+  output: var
+  files:
+    - version.txt

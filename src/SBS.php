@@ -30,10 +30,22 @@ class SBS
         }
         $config = Yaml::parseFile($file);
 
+        /** @var BuildStep[] $result */
         $result = [];
         foreach ($config as $name => $stepConfig) {
             $this->checkConfig($name, $stepConfig);
             $result[$name] = new BuildStep($name, $stepConfig, $this->io);
+        }
+
+        foreach ($config as $name => $stepConfig) {
+            if (isset($stepConfig['depends_on'])) {
+                $parentName = $stepConfig['depends_on'];
+                if (isset($result[$parentName])) {
+                    $result[$name]->dependsOn($result[$parentName]);
+                } else {
+                    $this->io->warning("Build step " . $name . " depends on unknown step " . $parentName);
+                }
+            }
         }
 
         return $result;
