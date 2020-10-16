@@ -6,6 +6,8 @@ namespace App;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
 class BuildStep
@@ -75,6 +77,27 @@ class BuildStep
     public function title(): string
     {
         return $this->config['title'] ?? $this->name;
+    }
+
+    public function clearBeforeBuild(): bool
+    {
+        if ($this->config['clear'] &&
+            isset($this->config['output']) &&
+            is_dir($this->config['output'])) {
+
+            $dir = realpath($this->config['output']);
+            $fs = new Filesystem();
+
+            try {
+                $fs->remove($dir);
+                $fs->mkdir($dir);
+                return true;
+            } catch (IOExceptionInterface $exception) {
+                echo "An error occurred while emptying directory at ".$exception->getPath();
+            }
+        }
+
+        return false;
     }
 
     public function build(): bool

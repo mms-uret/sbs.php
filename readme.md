@@ -3,7 +3,7 @@ SBS - Super Build Script
 
 SBS allows to build just parts of a mono repo in a CI environment.
 
-Eg. you have a React application and a PHP backend in the same repository.
+E.g. you have a React application and a PHP backend in the same repository.
 When the repository gets built, the PHP Unit tests get executed and also
 the React Application gets built and tested. This always happens when you
 push something to the master branch.
@@ -32,7 +32,7 @@ sbs.yml
 When to build a build step
 ----------------------------
 SBS decides if it has to build the build step according to the specification in sbs.yml
-SBS can decide this according:
+SBS can decide this according to:
 * hash of files or directories (use `files`)
 * hash of last commit of a branch in a git repository (use `commit`) 
 
@@ -56,6 +56,7 @@ Configuration reference
         cmd: the command to build this build step, required
         timeout: seconds the command has to execute before it timeouts, defaults to 3600
         working_dir: if the working directory of the command is not the project root, specify it here
+        clear: if the output directly should be cleared before building, optional
         output: where SBS writes the information which last state of the build step is built, required
         depends_on: name of other build step which hash gets included
         commit: tells SBS to look if there is a new commit hash on a certain repository

@@ -12,7 +12,8 @@
         "symfony/console" : "^2.7 || ^3.0 || ^4.0",
         "symfony/yaml": "^2.7 || ^3.0 || ^4.0",
         "symfony/process": "^2.7 || ^3.0 || ^4.0",
-        "symfony/finder": "^2.7 || ^3.0 || ^4.0"
+        "symfony/finder": "^2.7 || ^3.0 || ^4.0",
+        "symfony/filesystem": "^5.1"
     },
     "autoload": {
         "psr-4": {

@@ -18,3 +18,10 @@ child:
   output: var
   files:
     - version.txt
+removeOldContent:
+  title: This should remove the old content before building
+  cmd: 'mkdir -p var/removeOldContent && touch var/removeOldContent/$(date +"%T_%m_%d_%Y")'
+  output: var/removeOldContent
+  clear: true
+  files:
+    - version.txt
