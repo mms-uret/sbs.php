@@ -56,7 +56,7 @@ Configuration reference
         cmd: the command to build this build step, required
         timeout: seconds the command has to execute before it timeouts, defaults to 3600
         working_dir: if the working directory of the command is not the project root, specify it here
-        clear: if the output directly should be cleared before building, optional
+        clear: if the output directly should be cleared before building, defaults to false
         output: where SBS writes the information which last state of the build step is built, required
         depends_on: name of other build step which hash gets included
         commit: tells SBS to look if there is a new commit hash on a certain repository
