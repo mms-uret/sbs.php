@@ -53,6 +53,10 @@ class BuildCommand extends Command
                 continue;
             }
 
+            if ($step->clearBeforeBuild()) {
+                $io->writeln('Cleared output directory before building');
+            }
+
             if ($step->build()) {
                 $io->success('Successfully built step ' . $step->title());
                 $step->registerHash($hash);
