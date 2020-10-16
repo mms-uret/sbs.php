@@ -81,7 +81,7 @@ class BuildStep
 
     public function clearBeforeBuild(): bool
     {
-        if ($this->config['clear'] &&
+        if ($this->config['clear'] ?? false &&
             isset($this->config['output']) &&
             is_dir($this->config['output'])) {
 
