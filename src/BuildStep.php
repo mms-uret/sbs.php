@@ -7,7 +7,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
 class BuildStep
@@ -86,11 +85,10 @@ class BuildStep
             is_dir($this->config['output'])) {
 
             $dir = realpath($this->config['output']);
-            $fs = new Filesystem();
 
             try {
-                $fs->remove($dir);
-                $fs->mkdir($dir);
+                $emptyDirectoryProcess = new Process("rm -rf $dir/*");
+                $emptyDirectoryProcess->run();
                 return true;
             } catch (IOExceptionInterface $exception) {
                 echo "An error occurred while emptying directory at ".$exception->getPath();
