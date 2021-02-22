@@ -87,8 +87,9 @@ class BuildStep
             $dir = realpath($this->config['output']);
 
             try {
-                $emptyDirectoryProcess = new Process("rm -rf $dir/*");
-                $emptyDirectoryProcess->run();
+                echo "debug output: rm -rf $dir/*";
+                #$emptyDirectoryProcess = new Process("rm -rf $dir/*");
+                #$emptyDirectoryProcess->run();
                 return true;
             } catch (IOExceptionInterface $exception) {
                 echo "An error occurred while emptying directory at ".$exception->getPath();
