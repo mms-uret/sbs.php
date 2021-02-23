@@ -86,7 +86,7 @@ class BuildStep
 
             $dir = realpath($this->config['output']);
             if (!$dir) {
-                echo "Not today.";
+                $this->io->writeln('Not today.');
                 return false;
             }
 
