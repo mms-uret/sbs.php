@@ -126,6 +126,10 @@ class BuildStep
 
     public function registerHash(string $hash)
     {
+        if (!is_dir(getcwd() . '/' .  $this->config['output'])) {
+            $createDirectory = new Process("mkdir -p " . $this->config['output']);
+            $createDirectory->run();
+        }
         $file = getcwd() . '/' . $this->config['output'] . '/sbs.built.json';
         $data = [];
         if (is_file($file)) {
