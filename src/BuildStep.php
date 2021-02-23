@@ -80,20 +80,20 @@ class BuildStep
 
     public function clearBeforeBuild(): bool
     {
-        if ($this->config['clear'] ?? false &&
+        if (isset($this->config['clear']) &&
+            $this->config['clear'] &&
             isset($this->config['output']) &&
             is_dir($this->config['output'])) {
 
             $dir = realpath($this->config['output']);
-
-            try {
-                echo "debug output: rm -rf $dir/*";
-                #$emptyDirectoryProcess = new Process("rm -rf $dir/*");
-                #$emptyDirectoryProcess->run();
-                return true;
-            } catch (IOExceptionInterface $exception) {
-                echo "An error occurred while emptying directory at ".$exception->getPath();
+            if (!$dir) {
+                echo "Not today.";
+                return false;
             }
+
+            $emptyDirectoryProcess = new Process("rm -rf $dir/*");
+            $emptyDirectoryProcess->run();
+            return true;
         }
 
         return false;
