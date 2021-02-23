@@ -6,7 +6,6 @@ namespace App;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Process\Process;
 
 class BuildStep
@@ -80,19 +79,20 @@ class BuildStep
 
     public function clearBeforeBuild(): bool
     {
-        if ($this->config['clear'] ?? false &&
+        if (isset($this->config['clear']) &&
+            $this->config['clear'] &&
             isset($this->config['output']) &&
             is_dir($this->config['output'])) {
 
             $dir = realpath($this->config['output']);
-
-            try {
-                $emptyDirectoryProcess = new Process("rm -rf $dir/*");
-                $emptyDirectoryProcess->run();
-                return true;
-            } catch (IOExceptionInterface $exception) {
-                echo "An error occurred while emptying directory at ".$exception->getPath();
+            if (!$dir) {
+                $this->io->writeln('Not today.');
+                return false;
             }
+
+            $emptyDirectoryProcess = new Process("rm -rf $dir/*");
+            $emptyDirectoryProcess->run();
+            return true;
         }
 
         return false;
